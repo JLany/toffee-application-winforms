@@ -9,50 +9,47 @@ namespace ToffeeSystemPrototype.OrderComponent
 {
     internal class Order
     {
-        public int Id { get; set; }
-        public List<Item> Items { get; set; } // this should be list<items ids>
-        public OrderStatus Status { get; set; }
-        private decimal orderTotal;
+        public DateTime CreatedDate { get; set; }
+        public decimal OrderTotal { get; set; } = 0;
+        public string OrderAddress { get; set; }
+        private OrderStatus OrderStatus { get; set; }
+        private string AccountEmail { get; set; }
 
-        public Order(int id, List<int> itemIds)
+        public Order(DateTime createdDate, decimal orderTotal
+            , string orderAddress, string accountEmail)
         {
-            Id = id;
-            Items = new List<Item>();
-            Status = OrderStatus.Active;
-        }
-
-        public void AddItem(Item item)
-        {
-            Items.Add(item);
-            orderTotal += item.Price;
-        }
-
-        public void PrintRecipt()
-        {
-            Console.WriteLine($"Order {Id}");
-            foreach (Item item in Items)
-            {
-                Console.WriteLine(item.ToString());
-            }
-
-            Console.WriteLine($"Order Total: ${orderTotal}");
-        }
-
-        public void PrintSummary()
-        {
-            Console.WriteLine($"Order {Id}");
-            Console.WriteLine($"Order Total: ${orderTotal}");
-            Console.WriteLine(Status.ToString());
-        }
-
-        public void Cancel()
-        {
-            Status = OrderStatus.Canceled;
+            CreatedDate = createdDate;
+            OrderTotal = orderTotal;
+            OrderAddress = orderAddress;
+            OrderStatus = OrderStatus.Active;
+            AccountEmail = accountEmail;
         }
 
         public void Deliver()
         {
-            Status = OrderStatus.Delivered;
+            OrderStatus = OrderStatus.Delivered;
+        }
+
+        public void PrintRecipt()
+        {
+            MessageBox.Show(
+                $"For Account: {AccountEmail}\nOrder Total: {OrderTotal}\nAddress: {OrderAddress}\nCreated: {CreatedDate}"
+                , "Your Order has been confirmed."
+                , MessageBoxButtons.OK
+                , MessageBoxIcon.Information
+                );            
+        }
+
+        public void PrintSummary()
+        {
+            //Console.WriteLine($"Order {Id}");
+            Console.WriteLine($"Order Total: ${OrderTotal}");
+            Console.WriteLine(OrderStatus.ToString());
+        }
+
+        public void Cancel()
+        {
+            OrderStatus = OrderStatus.Canceled;
         }
     }
 }

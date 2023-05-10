@@ -7,7 +7,9 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
+using ToffeeSystemPrototype.AccountComponent;
 using ToffeeSystemPrototype;
+using ToffeeSystemPrototype.AccountComponent;
 using ToffeeSystemPrototype.InventoryComponent;
 using static System.Windows.Forms.VisualStyles.VisualStyleElement.TextBox;
 
@@ -15,6 +17,7 @@ namespace ToffeeApplication
 {
     public partial class PlaceOrderForm : Form
     {
+        private UserSession CurrentSession { get; set; }
         private Dictionary<int, Item> inventoryItems;
 
         /// <summary>
@@ -22,9 +25,11 @@ namespace ToffeeApplication
         /// </summary>
         private Dictionary<Item, int> shoppingCartItems = new Dictionary<Item, int>(); 
 
-        public PlaceOrderForm()
+        public PlaceOrderForm(UserSession session)
         {
             InitializeComponent();
+
+            CurrentSession = session;
 
             // set up catalog
             var catalog = this.itemCatalogListView;
@@ -65,11 +70,27 @@ namespace ToffeeApplication
             this.addSelectedItemButton.Click += AddSelectedItemButton_Click;
             this.removeSelectedItemButton.Click += RemoveSelectedItemButton_Click;
             this.placeOrderButton.Click += PlaceOrderButton_Click;
+            this.FormClosed += PlaceOrderForm_FormClosed;
+        }
+
+        private void PlaceOrderForm_FormClosed(object? sender, FormClosedEventArgs e)
+        {
+            (new LoginForm()).Show();
         }
 
         private void PlaceOrderButton_Click(object? sender, EventArgs e)
         {
-            // Program.OrderComponent.PlaceOrder()
+            var itemIdQuantityPairs = new Dictionary<int, int>();
+
+            foreach (var itemQuantitiyPair in shoppingCartItems)
+            {
+                itemIdQuantityPairs.Add(itemQuantitiyPair.Key.Id, itemQuantitiyPair.Value);
+            }
+
+            Program.OrderComponent.PlaceOrder(itemIdQuantityPairs, CurrentSession.UserEmail);
+
+            shoppingCartItems.Clear();
+            PopulateShoppingCart();
         }
 
         private void RemoveSelectedItemButton_Click(object? sender, EventArgs e)

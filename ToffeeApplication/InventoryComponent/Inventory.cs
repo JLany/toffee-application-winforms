@@ -20,7 +20,12 @@ namespace ToffeeSystemPrototype.InventoryComponent
 
         public decimal GetPriceOf(int itemId)
         {
-            return items[itemId].Price;
+            return items[itemId].SalePrice;
+        }
+
+        public void RemoveFromStock(int itemId,  int quantity)
+        {
+            items[itemId].AvailableQuantity -= quantity;
         }
 
         public void RemoveFromStock(List<int> itemIds)

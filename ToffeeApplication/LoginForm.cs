@@ -8,6 +8,7 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 using ToffeeSystemPrototype.AccountComponent;
+using ToffeeSystemPrototype.AccountComponent;
 
 namespace ToffeeApplication
 {
@@ -31,7 +32,7 @@ namespace ToffeeApplication
 
             if (authenticated) // FOR DEBUGGING PURPOSES
             {
-                (new PlaceOrderForm()).Show();
+                (new PlaceOrderForm(new UserSession(this.emailTextBox.Text, DateTime.Now))).Show();
                 this.Close();
             }
             else

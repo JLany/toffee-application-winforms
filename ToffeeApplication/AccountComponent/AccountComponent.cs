@@ -11,6 +11,9 @@ namespace ToffeeSystemPrototype.AccountComponent
         , AccountManagementContract
         , AuthenticationAccountServicesContract
     {
+        /// <summary>
+        /// Represents Email, <see cref="Account"/> pairs
+        /// </summary>
         private Dictionary<string, Account> accounts = new Dictionary<string, Account>();
         // private EmailClient client;
 
@@ -18,6 +21,11 @@ namespace ToffeeSystemPrototype.AccountComponent
 
 
         // services for order component
+        public string GetAddressOf(string accountEmail)
+        {
+            return accounts[accountEmail].Address;
+        }
+
         public bool ValidateVouchers(int accoutnId, List<int> voucherIds)
         {
             return true;

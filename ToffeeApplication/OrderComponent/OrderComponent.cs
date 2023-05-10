@@ -15,9 +15,7 @@ namespace ToffeeSystemPrototype.OrderComponent
         private OrderAccountServicesContract accountComponent;
         private InventoryComponent.Inventory inventory;
 
-        private List<Order> orderes;
-        private List<Payment> payments;
-
+        private List<Order> orders = new List<Order>();
 
         private static int CurrentOrderId = 1; // should load from somewhere, to keep sync with order ids in DB
 
@@ -25,32 +23,36 @@ namespace ToffeeSystemPrototype.OrderComponent
         {
             this.accountComponent = accountComponent;
             this.inventory = inventory;
-            orderes = new List<Order>();
-            payments = new List<Payment>();
         }
 
         public void PlaceOrder(Dictionary<int, int> items, List<int> voucherIds, int appliedLP
             , int accountId)
-        {
-            Order newOrder = new Order(CurrentOrderId++, items.Keys.ToList());
-            /*
-                        decimal voucherDiscount;
-                        if (accountComponent.ValidateVouchers(accountId, voucherIds))
-                        {
-                            voucherDiscount = accountComponent.RedeemVouchers(accountId, voucherIds);
-                        }
-            */
+        { 
             decimal orderTotal = 0;
             foreach (var item_quantity in items)
             {
                 orderTotal += inventory.GetPriceOf(item_quantity.Key) * item_quantity.Value;
+                inventory.RemoveFromStock(item_quantity.Key, item_quantity.Value);
             }
 
-            accountComponent.CreditLP(accountId, (int)orderTotal);
-
-            //inventory.RemoveFromStock(items);
         }
 
-        // public void PlaceOrder(Dictionary<Item, int> itemQuantityPairs, )
+        public void PlaceOrder(Dictionary<int, int> itemIdQuantityPairs
+            , string accountEmail)
+        {
+            decimal orderTotal = 0;
+            foreach (var itemIdQuantityPair in itemIdQuantityPairs)
+            {
+                orderTotal += inventory.GetPriceOf(itemIdQuantityPair.Key) * itemIdQuantityPair.Value;
+                inventory.RemoveFromStock(itemIdQuantityPair.Key, itemIdQuantityPair.Value);
+            }
+
+            var order = new Order(DateTime.Now, orderTotal
+                , accountComponent.GetAddressOf(accountEmail)
+                , accountEmail
+                );
+
+            order.PrintRecipt();
+        }
     }
 }
